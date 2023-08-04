@@ -1,2 +1,4 @@
-run:
-	g++ src/server.cpp main.cpp src/database.cpp -o server -lsqlite3
+server:
+	g++ m_server.cpp src/* -o server -lsqlite3
+client:
+	g++ m_client.cpp src/* -o client -lsqlite3
