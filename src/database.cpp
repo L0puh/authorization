@@ -7,6 +7,6 @@ int db_connect(){
     int connect = sqlite3_open(dbfile, &DB);
     handle_err(connect, DB);
     log("db's up");
-    return 0;
+    return connect;
 }
 

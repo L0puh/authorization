@@ -4,6 +4,9 @@ void log(std::string msg){
     printf("[*] %s\n", msg.c_str());
 }
 
+void logerr(std::string msg){
+    printf("[-] error: %s\n", msg.c_str());
+}
 void handle_err(int res, sqlite3 *DB){
     if (res) {
         printf("[-] error: %s\n", sqlite3_errmsg(DB));
