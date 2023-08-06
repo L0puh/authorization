@@ -1,5 +1,6 @@
 #include "src.h"
 #include <atomic>
+#include <cstring>
 #include <netdb.h>
 #include <sys/socket.h>
 
@@ -36,5 +37,43 @@ void server_start(int sockfd) {
     }
 }
 void handle_client(int sockfd) {
+    Package_t pckg;
+    User_t user;
+    int bytes;
+    while ((bytes = recv(sockfd, &pckg, sizeof(pckg), 0)) > 0){
+        switch(pckg.type) {
+            //TODO
+            case SIGN_IN:
+            case LOG_IN:
+                log("recv a user");
+                user = handle_recv(sockfd, pckg);
+                break;
+            default:
+                logerr("unknown type");
+        }
+    } 
+    if (bytes == 0) {
+        log("user's out");
+    }
+}
+User_t handle_recv(int sockfd, Package_t pckg){
+    char* login = user_recv(pckg.login_size, sockfd);
+    int type = login[0] - '0';
+    User_t user;
+    if (type == LOGIN) {
+        user.login = login;
+        char* password = user_recv(pckg.password_size, sockfd);
+        type = password[0] - '0';
+        if (type  == PASSWORD) user.password = password;
+        delete[] login;
+        delete[] password;
+    }
+    return user; 
+}
 
+char* user_recv(size_t size_pckg, int sockfd){
+    char *message = new char[size_pckg + 1];
+    message[size_pckg] = '\0';
+    recv(sockfd, message, size_pckg, 0);
+    return message;
 }

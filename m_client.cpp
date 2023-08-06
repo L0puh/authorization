@@ -1,8 +1,9 @@
 #include "src/src.h"
 
 int main () {
-    server_connect();
-    int action = action_get();
-    action_handle(action);
+    int sockfd = server_connect();
+    short action = action_get();
+    User_t user = action_handle(action);
+    user_send(user, sockfd, action);
     return 0;
 }

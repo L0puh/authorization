@@ -15,14 +15,28 @@
 #define PORT "9000"
 #define BACK_LOG 10
 
+
+enum Message_type {
+    LOGIN=0,
+    PASSWORD=1, 
+    COMMAND=2
+};
 enum Types {
     LOG_IN=1,
     SIGN_IN,
+    REQUEST,
     DELETE,
     UPDATE,
     SUCCESS,
     ERROR
 };
+
+struct Package_t { 
+    short type;
+    size_t login_size;
+    size_t password_size;
+};
+
 struct User_t {
     std::string login;
     std::string password;
@@ -32,17 +46,21 @@ struct addrinfo* addr_init();
 
 /// SERVER ///
 int server_init(); 
+
 void handle_client(int sockfd);
+User_t handle_recv(int sockfd, Package_t pckg);
+
 void server_start(int sockfd);
+char* user_recv(size_t size_pckg, int sockfd);
 
 /// CLIENT ///
-void server_connect();
-
-User_t data_get();
-int action_get();
-void action_handle(int action);
-
+int server_connect();
+User_t user_get();
+short action_get();
+User_t action_handle(int action);
+void user_send(User_t user, int sockfd, short type);
 bool repeat_password(std::string psw);
+
 /// DATABASE //// 
 int db_connect();
 
