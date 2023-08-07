@@ -36,17 +36,28 @@ void server_start(int sockfd) {
         th_client.detach();
     }
 }
+
+void handle_enter(short type, User_t user){
+    //TODO:send back to client 
+    bool exists = user_check(user);
+    if (!exists) {
+        user_save(user);
+    } else if (type == SIGN_IN && exists) {
+        log("log in success");
+    } 
+    else logerr("the user exists");
+}
 void handle_client(int sockfd) {
     Package_t pckg;
     User_t user;
-    int bytes;
+    int bytes;     
     while ((bytes = recv(sockfd, &pckg, sizeof(pckg), 0)) > 0){
         switch(pckg.type) {
-            //TODO
             case SIGN_IN:
             case LOG_IN:
-                log("recv a user");
                 user = handle_recv(sockfd, pckg);
+                user.login.erase(0, 1);
+                handle_enter(pckg.type, user);
                 break;
             default:
                 logerr("unknown type");
@@ -77,3 +88,4 @@ char* user_recv(size_t size_pckg, int sockfd){
     recv(sockfd, message, size_pckg, 0);
     return message;
 }
+

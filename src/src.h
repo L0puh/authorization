@@ -12,6 +12,8 @@
 #include <string>
 #include <thread>
 #include <iostream>
+#include <string> 
+
 #define PORT "9000"
 #define BACK_LOG 10
 
@@ -46,10 +48,9 @@ struct addrinfo* addr_init();
 
 /// SERVER ///
 int server_init(); 
-
 void handle_client(int sockfd);
 User_t handle_recv(int sockfd, Package_t pckg);
-
+void handle_enter(short type, User_t user);
 void server_start(int sockfd);
 char* user_recv(size_t size_pckg, int sockfd);
 
@@ -63,10 +64,16 @@ bool repeat_password(std::string psw);
 
 /// DATABASE //// 
 int db_connect();
+void db_close();
+int table_create();
+bool user_check(User_t user);
+int user_save(User_t user);
+static int callback(void *sql_data, int rows, char** data, char **colum_name);
 
 /// log handle /// 
 void handle_err(int res);
 void handle_err(int res, sqlite3 *DB);
+void handle_err(int res, char* err);
 void log(std::string message);
 void logerr(std::string message);
 
