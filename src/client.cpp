@@ -11,9 +11,14 @@ int server_connect(){
     return sockfd;
 }
 
+std::string hash_password(const char *data) {
+    std::string hash = SHA256(data);
+    return hash;
+}
+
 void user_send(User_t user, int sockfd, short type) {
     std::string login = std::to_string(LOGIN) + user.login;
-    std::string password = std::to_string(PASSWORD) + user.password; //TODO:add encryption
+    std::string password = std::to_string(PASSWORD) + hash_password(user.password.c_str()); 
     Package_t pckg {.type = type, .login_size = login.size(), .password_size = password.size()};
     send(sockfd, &pckg, sizeof(pckg), 0);
     send(sockfd, login.c_str(), login.size(), 0);

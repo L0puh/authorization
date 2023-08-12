@@ -13,7 +13,7 @@
 #include <thread>
 #include <iostream>
 #include <string> 
-
+#include "sha2/sha2.h"
 #define PORT "9000"
 #define BACK_LOG 10
 
@@ -61,6 +61,7 @@ short action_get();
 User_t action_handle(int action);
 void user_send(User_t user, int sockfd, short type);
 bool repeat_password(std::string psw);
+std::string hash_password(char *data);
 
 /// DATABASE //// 
 int db_connect();

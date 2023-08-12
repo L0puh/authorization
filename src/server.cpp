@@ -1,8 +1,4 @@
 #include "src.h"
-#include <atomic>
-#include <cstring>
-#include <netdb.h>
-#include <sys/socket.h>
 
 int server_init() {
     struct addrinfo *servinfo = addr_init();    
