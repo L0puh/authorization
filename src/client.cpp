@@ -1,6 +1,5 @@
 #include "src.h"
-#include <cctype>
-#include <string>
+#include <cstdio>
 
 int server_connect(){
     struct addrinfo *servinfo = addr_init();
@@ -25,7 +24,12 @@ void user_send(User_t user, int sockfd, short type) {
     send(sockfd, password.c_str(), password.size(), 0);
     log("user sent");
 }
-
+void recv_pckg(int sockfd){
+    Package_t pckg;
+    if (recv(sockfd, &pckg, sizeof(pckg), 0) != -1 ){
+        log(pckg.type);
+    } 
+}
 User_t action_handle(int action) {
     User_t user;
     switch(action){

@@ -1,5 +1,7 @@
 #include "src.h"
 
+std::vector<Conn_t> connections;
+
 int server_init() {
     struct addrinfo *servinfo = addr_init();    
     int sockfd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
@@ -33,15 +35,40 @@ void server_start(int sockfd) {
     }
 }
 
+void conn_add(std::string login,int sockfd){
+    bool flag=true;
+    std::vector<Conn_t>::iterator itr = connections.begin();
+    while(itr != connections.end()) {
+        if (itr->sockfd == sockfd)
+            flag = false;
+        itr++;
+    }
+    if (connections.size() == 0 || flag ) {
+        connections.push_back(Conn_t{.sockfd = sockfd, .login = login});
+        log("add connection");
+    }
+}
+void send_pckg(Package_t pckg, std::string login){
+    std::vector<Conn_t>::iterator itr = connections.begin();
+    for (; itr!= connections.end(); itr++){
+        if (itr->login == login) {
+            send(itr->sockfd, &pckg, sizeof(pckg), 0);
+            log("sent back");
+        }
+    }
+
+}
 void handle_enter(short type, User_t user){
-    //TODO:send back to client 
     bool exists = user_check(user);
     if (!exists) {
         user_save(user);
-    } else if (type == SIGN_IN && exists) {
-        log("log in success");
-    } 
-    else logerr("the user exists");
+        send_pckg(Package_t{.type = SUCCESS}, user.login);
+    }
+    else if (type == SIGN_IN && exists) 
+        send_pckg(Package_t{.type = SUCCESS}, user.login);
+    else 
+        send_pckg(Package_t{.type=ERROR_EXISTS}, user.login);
+    
 }
 void handle_client(int sockfd) {
     Package_t pckg;
@@ -53,10 +80,11 @@ void handle_client(int sockfd) {
             case LOG_IN:
                 user = handle_recv(sockfd, pckg);
                 user.login.erase(0, 1);
+                conn_add(user.login, sockfd);
                 handle_enter(pckg.type, user);
                 break;
             default:
-                logerr("unknown type");
+                send_pckg(Package_t{.type = ERROR}, user.login);
         }
     } 
     if (bytes == 0) {

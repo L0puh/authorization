@@ -13,6 +13,7 @@
 #include <thread>
 #include <iostream>
 #include <string> 
+#include <vector>
 #include "sha2/sha2.h"
 #define PORT "9000"
 #define BACK_LOG 10
@@ -30,7 +31,13 @@ enum Types {
     DELETE,
     UPDATE,
     SUCCESS,
-    ERROR
+    ERROR_EXISTS, 
+    ERROR, 
+};
+
+struct Conn_t {
+    int sockfd;
+    std::string login;
 };
 
 struct Package_t { 
@@ -45,7 +52,6 @@ struct User_t {
 };
 
 struct addrinfo* addr_init();
-
 /// SERVER ///
 int server_init(); 
 void handle_client(int sockfd);
@@ -53,6 +59,8 @@ User_t handle_recv(int sockfd, Package_t pckg);
 void handle_enter(short type, User_t user);
 void server_start(int sockfd);
 char* user_recv(size_t size_pckg, int sockfd);
+void send_pckg(Package_t pckg, std::string login);
+void conn_add(std::string login,int sockfd);
 
 /// CLIENT ///
 int server_connect();
@@ -62,7 +70,7 @@ User_t action_handle(int action);
 void user_send(User_t user, int sockfd, short type);
 bool repeat_password(std::string psw);
 std::string hash_password(char *data);
-
+void recv_pckg(int sockfd);
 /// DATABASE //// 
 int db_connect();
 void db_close();
@@ -76,6 +84,7 @@ void handle_err(int res);
 void handle_err(int res, sqlite3 *DB);
 void handle_err(int res, char* err);
 void log(std::string message);
+void log(int type);
 void logerr(std::string message);
 
 #endif

@@ -5,5 +5,7 @@ int main () {
     short action = action_get();
     User_t user = action_handle(action);
     user_send(user, sockfd, action);
+    recv_pckg(sockfd);
+
     return 0;
 }

@@ -1,5 +1,18 @@
 #include "src.h"
 
+void log(int type){
+    switch (type) {
+        case ERROR:
+            logerr("unknown type");
+            break;
+        case ERROR_EXISTS:
+            logerr("the user exists");
+            break;
+        case SUCCESS:
+            log("success");
+            break;
+    }
+}
 void log(std::string msg){
     printf("[*] %s\n", msg.c_str());
 }
