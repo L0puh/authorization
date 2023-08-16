@@ -3,7 +3,6 @@
 ## stack: 
 - unix sockets 
 - sqlite3 as a database 
-- async cryptography with a secret key (in future)
 - hashing a password
 
 ## compiling 

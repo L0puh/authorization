@@ -21,9 +21,10 @@
 
 enum Message_type {
     LOGIN=0,
-    PASSWORD=1, 
-    COMMAND=2
+    PASSWORD, 
+    COMMAND
 };
+
 enum Types {
     LOG_IN=1,
     SIGN_IN,
@@ -52,6 +53,7 @@ struct User_t {
 };
 
 struct addrinfo* addr_init();
+
 /// SERVER ///
 int server_init(); 
 void handle_client(int sockfd);
@@ -71,6 +73,7 @@ void user_send(User_t user, int sockfd, short type);
 bool repeat_password(std::string psw);
 std::string hash_password(char *data);
 void recv_pckg(int sockfd);
+
 /// DATABASE //// 
 int db_connect();
 void db_close();
